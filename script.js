@@ -331,8 +331,8 @@ function gerarMensagemCompleta() {
   const [anoFiltro, mesFiltro] = filtro ? filtro.split("-").map(Number) : [null, null];
 
   const dataAtualizacao = new Date().toLocaleDateString("pt-BR");
-  let texto = `📚 *Resumo do Segundo Semestre (${filtro})*\n`;
-  texto += `🕒 Última atualização: ${dataAtualizacao}\n\n`;
+  let texto = ` *Resumo do Segundo Semestre (${filtro})*\n`;
+  texto += ` Última atualização: ${dataAtualizacao}\n\n`;
 
   let faltas = 0;
   let detalhes = "";
