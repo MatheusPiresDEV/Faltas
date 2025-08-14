@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="script.js"></script>
+
+    <title>Controle de Faltas - Faculdade</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-around;
+            background: #34495e;
+        }
+
+        nav button {
+            flex: 1;
+            padding: 1em;
+            background: #34495e;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        nav button.active {
+            background: #1abc9c;
+        }
+
+        section {
+            padding: 1em;
+            display: none;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            padding: 1em;
+            margin-bottom: 1em;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day {
+            background: white;
+            padding: 0.5em;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+        .day.falta {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .day.presenca {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .export-btn {
+            background: #2980b9;
+            color: white;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+            }
+        }
+
+        /* Botões aprimorados */
+        button {
+            padding: 0.6em 1.2em;
+            margin: 0.3em;
+            font-size: 1em;
+            border: none;
+            border-radius: 6px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        /* Botão de exportação */
+        .export-btn {
+            background-color: #27ae60;
+        }
+
+        .export-btn:hover {
+            background-color: #219150;
+        }
+
+        /* Estatísticas por matéria */
+        #estatisticas-materias .stat-item {
+            margin-bottom: 1em;
+            padding: 0.5em;
+            background: #ecf0f1;
+            border-radius: 5px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item strong {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 0.3em;
+            color: #2c3e50;
+        }
+
+        /* Barra de progresso */
+        .progress-bar {
+            width: 100%;
+            background-color: #dcdde1;
+            border-radius: 6px;
+            height: 12px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            transition: width 0.4s ease;
+        }
+
+        /* Barra de progresso geral */
+        #barra-geral {
+            margin-top: 1em;
+        }
+
+        #barra-geral .progress-bar {
+            height: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Controle de Faltas</h1>
+        <p id="validade-aviso" style="color: red; font-size: 1.2em;"></p>
+    </header>
+
+    <nav>
+        <button class="tab-btn active" data-tab="registro">Registro Diário</button>
+        <button class="tab-btn" data-tab="estatisticas">Estatísticas</button>
+        <button class="tab-btn" data-tab="calendario">Calendário</button>
+        <button class="tab-btn" data-tab="exportar">Exportar Dados</button>
+    </nav>
+
+    <main>
+        <section id="registro" class="active">
+            <div class="card">
+                <h2>Hoje é <span id="data-hoje"></span></h2>
+                <p>Matéria: <span id="materia-hoje"></span></p>
+                <p>Status de hoje: <span id="status-hoje">Aguardando registro...</span></p>
+                <button onclick="registrarPresenca(true)">Sim</button>
+                <button onclick="registrarPresenca(false)">Não</button>
+            </div>
+        </section>
+
+        <section id="estatisticas">
+            <div class="card">
+                <div id="estatisticas-materias"></div>
+                <h2>Estatísticas</h2>
+                <p>Total de Faltas: <span id="total-faltas">0</span></p>
+                <p>Porcentagem: <span id="porcentagem">0%</span></p>
+                <p>Faltam para reprovar: <span id="faltas-restantes">20</span></p>
+                <div id="alerta-reprovacao" style="color: red; font-weight: bold;"></div>
+                <div id="barra-geral">
+                    <strong>Progresso Geral</strong>
+                    <div class="progress-bar">
+                        <div class="progress" id="progresso-geral" style="width: 0%"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="calendario">
+            <div class="card">
+                <h2>Calendário</h2>
+                <div class="calendar" id="calendario-grid">
+                    <!-- Dias serão gerados via JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="exportar">
+            <div class="card">
+                <h2>Exportar Dados</h2>
+                <button class="export-btn" onclick="copiarParaWhatsapp()">Copiar para WhatsApp</button>
+                <p id="texto-exportado" style="margin-top: 1em;"></p>
+            </div>
+        </section>
+    </main>
+       <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const botoes = document.querySelectorAll(".tab-btn");
+    const secoes = document.querySelectorAll("main section");
+
+    botoes.forEach(botao => {
+      botao.addEventListener("click", () => {
+        // Remove classe "active" de todos os botões e seções
+        botoes.forEach(b => b.classList.remove("active"));
+        secoes.forEach(s => s.classList.remove("active"));
+
+        // Adiciona classe "active" ao botão clicado e à seção correspondente
+        botao.classList.add("active");
+        const id = botao.getAttribute("data-tab");
+        document.getElementById(id).classList.add("active");
+      });
+    });
+  });
+</script>
+</body>
+
+</html>

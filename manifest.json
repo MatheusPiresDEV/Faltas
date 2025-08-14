@@ -1,0 +1,24 @@
+{
+  "name": "Sistema de Controle de Faltas - Faculdade",
+  "short_name": "Controle Faltas",
+  "description": "Sistema para registro diário de presença na faculdade com cálculo de faltas e estatísticas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMjU2M2ViIi8+CjxwYXRoIGQ9Ik05NiA0OEMxMTkuNSA0OCAxMzggNjYuNSAxMzggOTBDMTM4IDExMy41IDExOS41IDEzMiA5NiAxMzJDNzIuNSAxMzIgNTQgMTEzLjUgNTQgOTBDNTQgNjYuNSA3Mi41IDQ4IDk2IDQ4WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTk2IDY0QzEwOS4zIDY0IDEyMCA3NC43IDEyMCA4OEMxMjAgMTAxLjMgMTA5LjMgMTEyIDk2IDExMkM4Mi43IDExMiA3MiAxMDEuMyA3MiA4OEM3MiA3NC43IDgyLjcgNjQgOTYgNjRaIiBmaWxsPSIjMjU2M2ViIi8+Cjwvc3ZnPg==",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjMjU2M2ViIi8+CjxwYXRoIGQ9Ik0yNTYgMTI4QzMwNyAxMjggMzQ4IDE2OSAzNDggMjIwQzM0OCAyNzEgMzA3IDMxMiAyNTYgMzEyQzIwNSAzMTIgMTY0IDI3MSAxNjQgMjIwQzE2NCAxNjkgMjA1IDEyOCAyNTYgMTI4WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTI1NiAxNzJDMjc5LjMgMTcyIDI5OCAxOTAuNyAyOTggMjE0QzI5OCAyMzcuMyAyNzkuMyAyNTYgMjU2IDI1NkMyMzIuNyAyNTYgMjE0IDIzNy4zIDIxNCAyMTRDMjE0IDE5MC43IDIzMi43IDE3MiAyNTYgMTcyWiIgZmlsbD0iIzI1NjNlYiIvPgo8L3N2Zz4=",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "pt-BR"
+}

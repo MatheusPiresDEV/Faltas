@@ -1,0 +1,156 @@
+:root {
+  --primary-color: #2563eb;
+  --success-color: #22c55e;
+  --danger-color: #ef4444;
+  --background-color: #f8fafc;
+  --card-background: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --border-color: #e2e8f0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* Header */
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: #34495e;
+}
+nav button {
+  flex: 1;
+  padding: 1em;
+  background: #34495e;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+nav button.active {
+  background: var(--primary-color);
+}
+
+/* Sections */
+section {
+  padding: 1em;
+  display: none;
+}
+section.active {
+  display: block;
+}
+
+/* Cards */
+.card {
+  background-color: var(--card-background);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+
+/* Calendar */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.day {
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  text-align: center;
+  font-size: 0.8em;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+.day.presenca {
+  background-color: #d4f7d4;
+  color: #1e293b;
+}
+.day.falta {
+  background-color: #f7d4d4;
+  color: #1e293b;
+}
+.day:hover {
+  background-color: #e0e0e0;
+}
+
+/* Estatísticas por matéria */
+#estatisticas-materias .stat-item {
+  margin-bottom: 1em;
+  padding: 0.5em;
+  background: #ecf0f1;
+  border-radius: 5px;
+  box-shadow: var(--shadow);
+}
+.stat-item strong {
+  display: block;
+  font-size: 1.1em;
+  margin-bottom: 0.3em;
+  color: var(--text-primary);
+}
+.progress-bar {
+  width: 100%;
+  background-color: #bdc3c7;
+  border-radius: 6px;
+  height: 12px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.progress {
+  height: 100%;
+  background-color: var(--success-color);
+  transition: width 0.4s ease;
+}
+
+/* Botões */
+button {
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0.3em;
+}
+button:hover {
+  opacity: 0.9;
+}
+.export-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Alertas */
+#alerta-reprovacao {
+  color: var(--danger-color);
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+  }
+}
