@@ -1,39 +1,75 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const hoje = new Date();
-  const dataLimite = new Date("2026-01-01");
+    const hoje = new Date();
+    const dataLimite = new Date("2026-01-01");
 
-  if (hoje >= dataLimite) {
-    document.body.innerHTML = `
-      <div style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #a908f3ff;
-      ">
+    if (hoje >= dataLimite) {
+        document.body.innerHTML = `
         <div style="
-          max-width: 500px;
-          width: 90%;
-          padding: 40px;
-          border-radius: 10px;
-          background-color: white;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-          text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #a908f3ff;
         ">
-          <h1 style="color: red; font-size: 2em; margin-bottom: 10px;">ATUALIZE AS MATÉRIAS</h1>
-          <p style="color: #333; font-size: 1.1em;">O sistema expirou. Atualize os dados para continuar usando.</p>
+            <div style="
+                max-width: 500px;
+                width: 90%;
+                padding: 40px;
+                border-radius: 10px;
+                background-color: white;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                text-align: center;
+            ">
+                <h1 style="color: red; font-size: 2em; margin-bottom: 10px;">ATUALIZE AS MATÉRIAS</h1>
+                <p style="color: #333; font-size: 1.1em;">O sistema expirou. Atualize os dados para continuar usando.</p>
+            </div>
         </div>
-      </div>
-    `;
-    throw new Error("Sistema expirado");
-  }
+        `;
+        throw new Error("Sistema expirado");
+    }
+
+    // Função para gerar opções de mês
+    function gerarOpcoesMes() {
+        const select = document.getElementById("filtro-mes");
+        if (!select) return;
+
+        const hoje = new Date();
+        const inicio = new Date("2024-01-01");
+        const fim = new Date("2026-01-01");
+
+        while (inicio < fim) {
+            const valor = `${inicio.getFullYear()}-${String(inicio.getMonth() + 1).padStart(2, "0")}`;
+            const nome = inicio.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+            const option = document.createElement("option");
+            option.value = valor;
+            option.textContent = nome.charAt(0).toUpperCase() + nome.slice(1);
+
+            if (
+                inicio.getMonth() === hoje.getMonth() &&
+                inicio.getFullYear() === hoje.getFullYear()
+            ) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+            inicio.setMonth(inicio.getMonth() + 1);
+        }
+    }
+
+    // Inicialização do sistema
+    gerarOpcoesMes();
+    atualizarData();
+    gerarCalendario();
+    atualizarEstatisticas();
+    configurarAbas();
+    agendarNotificacao();
 });
-
-
 
 // CONFIGURAÇÕES
 const limiteFaltas = 20;
 const faltaEquivalente = 4;
+let mesAtual = new Date().getMonth();
+let anoAtual = new Date().getFullYear();
 const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const materiasPorDia = {
     1: "Estatística Orientada à Ciência de Dados",
@@ -93,14 +129,16 @@ function registrarPresenca(presente) {
 function gerarCalendario() {
     const grid = document.getElementById("calendario-grid");
     grid.innerHTML = "";
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = hoje.getMonth();
-    const ultimoDia = new Date(ano, mes + 1, 0);
+
+    const ultimoDia = new Date(anoAtual, mesAtual + 1, 0);
     const registros = JSON.parse(localStorage.getItem("registros") || "{}");
 
+    // Atualiza título do mês
+    const nomeMes = ultimoDia.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+    document.getElementById("mes-atual").textContent = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+
     for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
-        const data = new Date(ano, mes, dia);
+        const data = new Date(anoAtual, mesAtual, dia);
         const iso = data.toISOString().split("T")[0];
         const diaSemana = data.getDay();
         const materia = materiasPorDia[diaSemana] || "Sem aula";
@@ -109,10 +147,10 @@ function gerarCalendario() {
         const div = document.createElement("div");
         div.className = "day";
         div.innerHTML = `
-      <strong>${dia}</strong><br>
-      <small>${diasSemana[diaSemana]}</small><br>
-      <small>${materia}</small>
-    `;
+          <strong>${dia}</strong><br>
+          <small>${diasSemana[diaSemana]}</small><br>
+          <small>${materia}</small>
+        `;
 
         if (registro) {
             div.classList.add(registro.status);
@@ -122,6 +160,54 @@ function gerarCalendario() {
         div.onclick = () => editarDia(iso, registro?.status || "", materia);
         grid.appendChild(div);
     }
+}
+function mudarMes(direcao) {
+    mesAtual += direcao;
+
+    if (mesAtual > 11) {
+        mesAtual = 0;
+        anoAtual++;
+    } else if (mesAtual < 0) {
+        mesAtual = 11;
+        anoAtual--;
+    }
+
+    const limite = new Date("2026-01-01");
+    const dataAtual = new Date(anoAtual, mesAtual);
+
+    if (dataAtual >= limite) {
+        alert("Limite de visualização atingido.");
+        mesAtual -= direcao;
+        if (direcao > 0) anoAtual--; else anoAtual++;
+        return;
+    }
+
+    gerarCalendario();
+    atualizarEstatisticas(); // <- garante que as stats reflitam qualquer edição
+}
+
+function mudarMes(direcao) {
+    mesAtual += direcao;
+
+    if (mesAtual > 11) {
+        mesAtual = 0;
+        anoAtual++;
+    } else if (mesAtual < 0) {
+        mesAtual = 11;
+        anoAtual--;
+    }
+
+    const limite = new Date("2026-01-01");
+    const dataAtual = new Date(anoAtual, mesAtual);
+
+    if (dataAtual >= limite) {
+        alert("Limite de visualização atingido.");
+        mesAtual -= direcao; // desfaz mudança
+        if (direcao > 0) anoAtual--; else anoAtual++;
+        return;
+    }
+
+    gerarCalendario();
 }
 
 // EDIÇÃO DE DIA NO CALENDÁRIO
@@ -146,13 +232,19 @@ function editarDia(dataISO, statusAtual, materia) {
     atualizarEstatisticas();
 }
 
-// ATUALIZA ESTATÍSTICAS
 function atualizarEstatisticas() {
     const registros = JSON.parse(localStorage.getItem("registros") || "{}");
     const faltasPorMateria = {};
     let faltasTotais = 0;
 
-    for (const info of Object.values(registros)) {
+    // Verifica se há filtro de mês
+    const filtro = document.getElementById("filtro-mes")?.value;
+    const [anoFiltro, mesFiltro] = filtro ? filtro.split("-").map(Number) : [null, null];
+
+    for (const [data, info] of Object.entries(registros)) {
+        const [ano, mes] = data.split("-").map(Number);
+        if (anoFiltro && mesFiltro && (ano !== anoFiltro || mes !== mesFiltro)) continue;
+
         if (info.status === "falta") {
             const materia = info.materia;
             faltasPorMateria[materia] = (faltasPorMateria[materia] || 0) + faltaEquivalente;
@@ -168,14 +260,14 @@ function atualizarEstatisticas() {
         const porcentagem = ((faltas / limiteFaltas) * 100).toFixed(1);
 
         container.innerHTML += `
-      <div class="stat-item">
-        <strong>${materia}</strong>
-        <p>Faltas: ${faltas} / ${limiteFaltas} (${porcentagem}%)</p>
-        <div class="progress-bar">
-          <div class="progress" style="width: ${porcentagem}%"></div>
+        <div class="stat-item">
+            <strong>${materia}</strong>
+            <p>Faltas: ${faltas} / ${limiteFaltas} (${porcentagem}%)</p>
+            <div class="progress-bar">
+                <div class="progress" style="width: ${porcentagem}%"></div>
+            </div>
         </div>
-      </div>
-    `;
+        `;
     }
 
     const porcentagemTotal = ((faltasTotais / 100) * 100).toFixed(1); // 100 aulas totais
@@ -206,32 +298,66 @@ function atualizarEstatisticas() {
     } else {
         alerta.textContent = "";
     }
-
 }
 
-// EXPORTA DADOS PARA WHATSAPP
-function copiarParaWhatsapp() {
-    const registros = JSON.parse(localStorage.getItem("registros") || "{}");
-    let texto = "Resumo de Faltas:\n";
-    let faltas = 0;
+function abrirMenuCompartilhar() {
+  const menu = document.getElementById("menu-compartilhar");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
 
-    for (const [data, info] of Object.entries(registros)) {
-        if (info.status === "falta") {
-            texto += `• ${data} - ${info.materia}\n`;
-            faltas += faltaEquivalente;
-        }
+function compartilharMensagem(app) {
+  const texto = gerarMensagemCompleta();
+  const encoded = encodeURIComponent(texto);
+
+  if (app === "whatsapp") {
+    window.open(`https://wa.me/?text=${encoded}`, "_blank");
+  } else if (app === "telegram") {
+    window.open(`https://t.me/share/url?url=&text=${encoded}`, "_blank");
+  } else if (app === "email") {
+    window.open(`mailto:?subject=Resumo do Segundo Semestre&body=${encoded}`, "_blank");
+  }
+}
+
+function copiarMensagem() {
+  const texto = gerarMensagemCompleta();
+  navigator.clipboard.writeText(texto).then(() => {
+    document.getElementById("texto-exportado").textContent = "Texto copiado com sucesso!";
+  });
+}
+
+function gerarMensagemCompleta() {
+  const registros = JSON.parse(localStorage.getItem("registros") || "{}");
+  const filtro = document.getElementById("filtro-mes")?.value;
+  const [anoFiltro, mesFiltro] = filtro ? filtro.split("-").map(Number) : [null, null];
+
+  const dataAtualizacao = new Date().toLocaleDateString("pt-BR");
+  let texto = `📚 *Resumo do Segundo Semestre (${filtro})*\n`;
+  texto += `🕒 Última atualização: ${dataAtualizacao}\n\n`;
+
+  let faltas = 0;
+  let detalhes = "";
+
+  for (const [data, info] of Object.entries(registros)) {
+    const [ano, mes] = data.split("-").map(Number);
+    if (anoFiltro && mesFiltro && (ano !== anoFiltro || mes !== mesFiltro)) continue;
+
+    if (info.status === "falta") {
+      detalhes += `• ${data} - ${info.materia}\n`;
+      faltas += faltaEquivalente;
     }
+  }
 
-    const faltasRestantes = Math.max(0, limiteFaltas - faltas);
-    const porcentagem = ((faltas / limiteFaltas) * 100).toFixed(1);
+  const faltasRestantes = Math.max(0, limiteFaltas - faltas);
+  const porcentagem = ((faltas / limiteFaltas) * 100).toFixed(1);
 
-    texto += `\nTotal de faltas: ${faltas}`;
-    texto += `\nPorcentagem: ${porcentagem}%`;
-    texto += `\nFaltam para reprovar: ${faltasRestantes}`;
+  texto += `❌ Total de faltas: ${faltas}\n`;
+  texto += `📊 Porcentagem do limite: ${porcentagem}%\n`;
+  texto += `⚠️ Faltam para reprovar: ${faltasRestantes}\n\n`;
+  texto += `📌 *Detalhes das faltas:*\n${detalhes || "Nenhuma falta registrada."}`;
 
-    navigator.clipboard.writeText(texto);
-    document.getElementById("texto-exportado").textContent = "Dados copiados com sucesso!";
+  return texto.trim();
 }
+
 
 // ABAS
 function configurarAbas() {
@@ -246,6 +372,33 @@ function configurarAbas() {
             document.getElementById(btn.dataset.tab).classList.add("active");
         };
     });
+}
+function gerarOpcoesMes() {
+    const select = document.getElementById("filtro-mes");
+    if (!select) return;
+
+    const inicio = new Date("2024-01-01");
+    const fim = new Date("2026-01-01");
+    const hoje = new Date();
+
+    while (inicio < fim) {
+        const valor = `${inicio.getFullYear()}-${String(inicio.getMonth() + 1).padStart(2, "0")}`;
+        const nome = inicio.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+        const option = document.createElement("option");
+        option.value = valor;
+        option.textContent = nome.charAt(0).toUpperCase() + nome.slice(1);
+
+        // Seleciona o mês atual por padrão
+        if (
+            inicio.getMonth() === hoje.getMonth() &&
+            inicio.getFullYear() === hoje.getFullYear()
+        ) {
+            option.selected = true;
+        }
+
+        select.appendChild(option);
+        inicio.setMonth(inicio.getMonth() + 1);
+    }
 }
 
 // NOTIFICAÇÃO DIÁRIA

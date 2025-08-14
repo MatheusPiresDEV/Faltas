@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="script.js"></script>
 
-    <title>Controle de Faltas - Faculdade</title>
+    <title>Controle de Faltas - 2 Semestre' Faculdade </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,8 +61,30 @@
 
         .calendar {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .calendar {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 8px;
+            }
+
+            .day {
+                font-size: 0.85em;
+                padding: 0.6em;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            nav button {
+                font-size: 0.9em;
+                padding: 0.8em;
+            }
         }
 
         .day {
@@ -195,6 +217,10 @@
 
         <section id="estatisticas">
             <div class="card">
+                <label for="filtro-mes">Filtrar por mês:</label>
+                <select id="filtro-mes" onchange="atualizarEstatisticas()">
+                    <!-- opções geradas via JS -->
+                </select>
                 <div id="estatisticas-materias"></div>
                 <h2>Estatísticas</h2>
                 <p>Total de Faltas: <span id="total-faltas">0</span></p>
@@ -210,43 +236,192 @@
 
             </div>
         </section>
-
         <section id="calendario">
+            <style>
+                .card {
+                    background: white;
+                    padding: 1em;
+                    margin-bottom: 1em;
+                    border-radius: 5px;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                }
+
+                .mes-navegacao {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1em;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                }
+
+                .mes-navegacao button {
+                    background-color: #1abc9c;
+                    color: white;
+                    border: none;
+                    padding: 0.5em 1em;
+                    border-radius: 6px;
+                    font-size: 1.2em;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                }
+
+                .mes-navegacao button:hover {
+                    background-color: #16a085;
+                    transform: scale(1.05);
+                }
+
+                #mes-atual {
+                    flex: 1;
+                    text-align: center;
+                    font-size: 1.2em;
+                    font-weight: bold;
+                    color: #2c3e50;
+                }
+
+                .filtro-mes-container {
+                    margin-bottom: 1em;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5em;
+                    max-width: 250px;
+                }
+
+                .filtro-mes-container label {
+                    font-weight: bold;
+                    color: #2c3e50;
+                    font-size: 1em;
+                }
+
+                #filtro-mes {
+                    padding: 0.5em;
+                    font-size: 1em;
+                    border-radius: 6px;
+                    border: 1px solid #ccc;
+                    background-color: #fff;
+                    color: #2c3e50;
+                    transition: border-color 0.3s ease;
+                }
+
+                #filtro-mes:hover,
+                #filtro-mes:focus {
+                    border-color: #1abc9c;
+                    outline: none;
+                }
+
+                .calendar {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                    gap: 10px;
+                    padding: 10px;
+                }
+
+                .day {
+                    background: white;
+                    padding: 0.5em;
+                    text-align: center;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    border: 1px solid #ccc;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
+
+                .day:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+                }
+
+                .day.falta {
+                    background: #e74c3c;
+                    color: white;
+                }
+
+                .day.presenca {
+                    background: #2ecc71;
+                    color: white;
+                }
+
+                @media (max-width: 600px) {
+                    .calendar {
+                        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                        gap: 8px;
+                    }
+
+                    .day {
+                        font-size: 0.85em;
+                        padding: 0.6em;
+                    }
+
+                    .mes-navegacao {
+                        flex-direction: column;
+                        align-items: stretch;
+                    }
+
+                    #mes-atual {
+                        text-align: center;
+                        margin: 0.5em 0;
+                    }
+                }
+            </style>
+
             <div class="card">
                 <h2>Calendário</h2>
+
+                <div class="mes-navegacao">
+                    <button onclick="mudarMes(-1)">⬅️</button>
+                    <h3 id="mes-atual">Agosto 2025</h3>
+                    <button onclick="mudarMes(1)">➡️</button>
+                </div>
+
+                <!-- <div class="filtro-mes-container">
+                    <label for="filtro-mes">Filtrar por mês:</label>
+                    <select id="filtro-mes" onchange="atualizarEstatisticas()">
+                        opções geradas via JS -->
+                <!-- </select>
+                </div> -->
+
                 <div class="calendar" id="calendario-grid">
                     <!-- Dias serão gerados via JS -->
                 </div>
             </div>
         </section>
-
         <section id="exportar">
             <div class="card">
                 <h2>Exportar Dados</h2>
-                <button class="export-btn" onclick="copiarParaWhatsapp()">Copiar para WhatsApp</button>
+
+                <button class="export-btn" onclick="abrirMenuCompartilhar()">📤 Compartilhar</button>
+
+                <div id="menu-compartilhar" class="menu-compartilhar">
+                    <button onclick="compartilharMensagem('whatsapp')">WhatsApp</button>
+                    <button onclick="compartilharMensagem('telegram')">Telegram</button>
+                    <button onclick="compartilharMensagem('email')">Email</button>
+                    <button onclick="copiarMensagem()">Copiar Texto</button>
+                </div>
+
                 <p id="texto-exportado" style="margin-top: 1em;"></p>
             </div>
         </section>
+
     </main>
-       <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const botoes = document.querySelectorAll(".tab-btn");
-    const secoes = document.querySelectorAll("main section");
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const botoes = document.querySelectorAll(".tab-btn");
+            const secoes = document.querySelectorAll("main section");
 
-    botoes.forEach(botao => {
-      botao.addEventListener("click", () => {
-        // Remove classe "active" de todos os botões e seções
-        botoes.forEach(b => b.classList.remove("active"));
-        secoes.forEach(s => s.classList.remove("active"));
+            botoes.forEach(botao => {
+                botao.addEventListener("click", () => {
+                    // Remove classe "active" de todos os botões e seções
+                    botoes.forEach(b => b.classList.remove("active"));
+                    secoes.forEach(s => s.classList.remove("active"));
 
-        // Adiciona classe "active" ao botão clicado e à seção correspondente
-        botao.classList.add("active");
-        const id = botao.getAttribute("data-tab");
-        document.getElementById(id).classList.add("active");
-      });
-    });
-  });
-</script>
+                    // Adiciona classe "active" ao botão clicado e à seção correspondente
+                    botao.classList.add("active");
+                    const id = botao.getAttribute("data-tab");
+                    document.getElementById(id).classList.add("active");
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -9,6 +9,43 @@
   --border-color: #e2e8f0;
   --shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+/* Seletor de mês */
+#filtro-mes {
+  padding: 0.5em;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #2c3e50;
+  margin-bottom: 1em;
+  transition: border-color 0.3s ease;
+}
+
+#filtro-mes:hover,
+#filtro-mes:focus {
+  border-color: #1abc9c;
+  outline: none;
+}
+
+/* Botões de navegação de mês */
+.mes-navegacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1em;
+  flex-wrap: wrap;
+}
+
+#mes-atual {
+  flex: 1;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+
 
 /* Base */
 * {
